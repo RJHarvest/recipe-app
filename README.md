@@ -1,24 +1,19 @@
-# recipe
+# HomeChef | Recipe App
 
-## Project setup
-```
-yarn install
-```
+A simple recipe app that displays a list of different recipes to follow. This was made to try out and practice the VueJS framework.
 
-### Compiles and hot-reloads for development
+It uses [TheMealDB API](https://www.themealdb.com/) to get the list of recipes.
+
+[Live Demo](https://rjharvest.github.io/recipe-app/)
+
+![landing page](/landing-page.png)
+
+## Compiles and hot-reloads for development
 ```
 yarn serve
 ```
 
-### Compiles and minifies for production
+## Deploy app
 ```
-yarn build
+yarn deploy
 ```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
