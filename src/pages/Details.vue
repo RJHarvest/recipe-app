@@ -1,6 +1,7 @@
 <template>
   <div>
     <Navbar />
+    <ErrorMessage :error="error" :showError="showError" />
     <div class="detail md-layout md-gutter">
       <div class="md-layout-item md-large-size-100 md-xsmall-size-100">
         <md-button @click="$router.back()" class="md-raised md-dense back">Back</md-button>
@@ -42,19 +43,22 @@
 
 <script>
   import Navbar from '@/components/Navbar.vue'
+  import ErrorMessage from '@/components/ErrorMessage.vue'
 
   export default {
     name: 'recipe-details',
     components: {
       Navbar,
+      ErrorMessage,
     },
     data() {
       return {
-        recipe: {}
+        recipe: {},
+        showError: false,
+        error: null,
       }
     },
     mounted() {
-      console.log(this.$router);
       this.getRecipe(this.$route.params.mealId)
     },
     methods: {
@@ -64,7 +68,8 @@
           const recipe = this.formatRecipeDataObject(response.data.meals[0])
           this.recipe = recipe
         } catch (err) {
-          console.log('Error', err);
+          this.error = err
+          this.showError = true
         }
       },
       formatRecipeDataObject(recipeData) {
