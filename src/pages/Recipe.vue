@@ -1,12 +1,8 @@
 <template>
   <div>
     <Navbar />
+    <ErrorMessage :error="error" :showError="showError" />
     <div class="recipe-section">
-      <!-- Snackbar for displaying error messages -->
-      <md-snackbar md-position="center" :md-duration="snackbarDuration" :md-active.sync="showError">
-        <span>{{ error }}</span>
-      </md-snackbar>
-
       <!-- drawer for filters -->
       <md-drawer :md-active.sync="showFilters" md-swipeable>
         <md-toolbar class="md-transparent" md-elevation="0">
@@ -18,7 +14,7 @@
             <span class="md-list-item-text">Categories</span>
 
             <md-list slot="md-expand">
-              <md-list-item v-for="(category, index) in categories" :key="index" @click="getRecipes(category.strCategory, 'c')">
+              <md-list-item v-for="(category, index) in categories" :key="index" @click="handleFilterOnSelect(category.strCategory, 'c')">
                 {{ category.strCategory }}
               </md-list-item>
             </md-list>
@@ -28,7 +24,7 @@
             <span class="md-list-item-text">Areas</span>
 
             <md-list slot="md-expand">
-              <md-list-item v-for="(area, index) in areas" :key="index" @click="getRecipes(area.strArea, 'a')">
+              <md-list-item v-for="(area, index) in areas" :key="index" @click="handleFilterOnSelect(area.strArea, 'a')">
                 {{ area.strArea }}
               </md-list-item>
             </md-list>
@@ -38,7 +34,7 @@
             <span class="md-list-item-text">Ingredients</span>
 
             <md-list slot="md-expand">
-              <md-list-item v-for="ingredient in ingredients" :key="ingredient.idIngredient" @click="getRecipes(ingredient.strIngredient, 'i')">
+              <md-list-item v-for="ingredient in ingredients" :key="ingredient.idIngredient" @click="handleFilterOnSelect(ingredient.strIngredient, 'i')">
                 {{ ingredient.strIngredient }}
               </md-list-item>
             </md-list>
@@ -90,11 +86,13 @@
 
 <script>
   import Navbar from '@/components/Navbar.vue'
+  import ErrorMessage from '@/components/ErrorMessage.vue'
 
   export default {
     name: 'recipe',
     components: {
       Navbar,
+      ErrorMessage,
     },
     data() {
       return {
@@ -109,11 +107,18 @@
         snackbarDuration: 4000,
       }
     },
+    watch: {
+      $route(to) {
+        const { filter, filterType, search } = to.query
+        this.getRecipes({ filter, filterType, search })
+      }
+    },
     mounted() {
       this.getAreas()
       this.getIngredients()
       this.getCategories()
-      this.getRecipes(this.$route.query.filter, this.$route.query.filterType)
+      const { filter, filterType, search } = this.$route.query
+      this.getRecipes({ filter, filterType, search })
     },
     methods: {
       async getAreas() {
@@ -131,7 +136,7 @@
           this.ingredients = response.data.meals
         } catch (err) {
           this.error = err
-          this.isError = true
+          this.showError = true
         }
       },
       async getCategories() {
@@ -140,21 +145,25 @@
           this.categories = response.data.meals
         } catch (err) {
           this.error = err
-          this.isError = true
+          this.showError = true
         }
       },
-      async getRecipes(filter = '', filterType = 'i') {
+      async getRecipes({filter = '', filterType = 'i', search = null} = {}) {
         try {
           this.isLoading = true
-          const response = await this.axios.get(`filter.php?${filterType}=${filter}`)
+          const url = search ? `search.php?s=${search}` : `filter.php?${filterType}=${filter}`
+          const response = await this.axios.get(url)
           this.recipes = response.data.meals
           this.isLoading = false
         } catch (err) {
           this.error = err
-          this.isError = true
+          this.showError = true
         }
         this.showFilters = false
         this.isLoading = false
+      },
+      handleFilterOnSelect(filter, filterType) {
+        this.$router.push({ name: 'recipe', query: { filter, filterType } })
       },
       getRecipeLink(id) {
         return `/detail/${id}`
