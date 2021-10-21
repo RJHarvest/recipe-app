@@ -3,18 +3,45 @@
     <Navbar />
     <div class="recipe-section">
       <!-- Snackbar for displaying error messages -->
-      <md-snackbar md-position="center" md-duration="4000" :md-active.sync="showError">
+      <md-snackbar md-position="center" :md-duration="snackbarDuration" :md-active.sync="showError">
         <span>{{ error }}</span>
       </md-snackbar>
 
       <!-- drawer for filters -->
       <md-drawer :md-active.sync="showFilters" md-swipeable>
         <md-toolbar class="md-transparent" md-elevation="0">
-          <span class="md-title">Filter By Ingredients</span>
+          <span class="md-title">Filter Recipes</span>
         </md-toolbar>
-        <md-list>
-          <md-list-item v-for="ingredient in ingredients" :key="ingredient.idIngredient" @click="getRecipes(ingredient.strIngredient)">
-            <span class="md-list-item-text">{{ ingredient.strIngredient }}</span>
+        <md-list md-expand-single="true">
+          <md-list-item md-expand md-expanded.sync="true">
+            <md-icon>dinner_dining</md-icon>
+            <span class="md-list-item-text">Categories</span>
+
+            <md-list slot="md-expand">
+              <md-list-item v-for="(category, index) in categories" :key="index" @click="getRecipes(category.strCategory, 'c')">
+                {{ category.strCategory }}
+              </md-list-item>
+            </md-list>
+          </md-list-item>
+          <md-list-item md-expand>
+            <md-icon>public</md-icon>
+            <span class="md-list-item-text">Areas</span>
+
+            <md-list slot="md-expand">
+              <md-list-item v-for="(area, index) in areas" :key="index" @click="getRecipes(area.strArea, 'a')">
+                {{ area.strArea }}
+              </md-list-item>
+            </md-list>
+          </md-list-item>
+          <md-list-item md-expand>
+            <md-icon>bakery_dining</md-icon>
+            <span class="md-list-item-text">Ingredients</span>
+
+            <md-list slot="md-expand">
+              <md-list-item v-for="ingredient in ingredients" :key="ingredient.idIngredient" @click="getRecipes(ingredient.strIngredient, 'i')">
+                {{ ingredient.strIngredient }}
+              </md-list-item>
+            </md-list>
           </md-list-item>
         </md-list>
       </md-drawer>
@@ -31,9 +58,9 @@
             <md-empty-state
               md-icon="no_meals"
               md-label="No Recipes Found"
-              md-description="Select an ingredient to display a list of recipes."
+              md-description="Select a filter to display a list of recipes."
             >
-              <md-button class="md-primary md-raised" @click="showFilters = true">Select an ingredient</md-button>
+              <md-button class="md-primary md-raised" @click="showFilters = true">Select a filter</md-button>
             </md-empty-state>
           </div>
           <div v-else v-for="recipe in recipes" :key="recipe.idMeal" class="md-layout-item md-size-33">
@@ -72,18 +99,32 @@
     data() {
       return {
         ingredients: [],
+        areas: [],
+        categories: [],
         recipes: [],
         isLoading: false,
         showError: false,
         showFilters: false,
         error: null,
+        snackbarDuration: 4000,
       }
     },
     mounted() {
+      this.getAreas()
       this.getIngredients()
-      this.getRecipes(this.$route.query.filter)
+      this.getCategories()
+      this.getRecipes(this.$route.query.filter, this.$route.query.filterType)
     },
     methods: {
+      async getAreas() {
+        try {
+          const response = await this.axios.get('list.php?a=list')
+          this.areas = response.data.meals
+        } catch (err) {
+          this.error = err
+          this.showError = true
+        }
+      },
       async getIngredients() {
         try {
           const response = await this.axios.get('list.php?i=list')
@@ -93,10 +134,19 @@
           this.isError = true
         }
       },
-      async getRecipes(ingredient = '') {
+      async getCategories() {
+        try {
+          const response = await this.axios.get('list.php?c=list')
+          this.categories = response.data.meals
+        } catch (err) {
+          this.error = err
+          this.isError = true
+        }
+      },
+      async getRecipes(ingredient = '', filterType = 'i') {
         try {
           this.isLoading = true
-          const response = await this.axios.get(`filter.php?i=${ingredient}`)
+          const response = await this.axios.get(`filter.php?${filterType}=${ingredient}`)
           this.recipes = response.data.meals
           this.isLoading = false
         } catch (err) {
