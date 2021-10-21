@@ -143,10 +143,10 @@
           this.isError = true
         }
       },
-      async getRecipes(ingredient = '', filterType = 'i') {
+      async getRecipes(filter = '', filterType = 'i') {
         try {
           this.isLoading = true
-          const response = await this.axios.get(`filter.php?${filterType}=${ingredient}`)
+          const response = await this.axios.get(`filter.php?${filterType}=${filter}`)
           this.recipes = response.data.meals
           this.isLoading = false
         } catch (err) {
