@@ -3,9 +3,7 @@
     <div class="md-toolbar-section-start">
       <img class="logo" src="@/assets/logo-small-transparent.png" alt="logo" />
       <md-button to="/">Home</md-button>
-      <md-button to="/cuisine">Cuisine</md-button>
       <md-button to="/recipe">Recipes</md-button>
-      <md-button to="/meal">Meals</md-button>
     </div>
 
     <div class="md-toolbar-section-end">
