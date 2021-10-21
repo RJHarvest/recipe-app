@@ -21,7 +21,7 @@
             <md-card-header-text>
               <div class="md-title">Mexican Cuisine</div>
               <div class="md-subhead">Get recipe of cuisines around the world</div>
-              <md-button class="md-icon-button" to="/cuisine?filter=mexican">
+              <md-button class="md-icon-button" to="/recipe?filter=mexican&filterType=a">
                 <md-icon class="md-size-2x">play_circle</md-icon>
               </md-button>
             </md-card-header-text>
@@ -38,7 +38,7 @@
             <md-card-header-text>
               <div class="md-title">Chicken Recipes</div>
               <div class="md-subhead">Get recipe based on an ingredient</div>
-              <md-button class="md-icon-button" to="/recipe?filter=chicken">
+              <md-button class="md-icon-button" to="/recipe?filter=chicken&filterType=i">
                 <md-icon class="md-size-2x">play_circle</md-icon>
               </md-button>
             </md-card-header-text>
@@ -55,7 +55,7 @@
             <md-card-header-text>
               <div class="md-title">Breakfast Meals</div>
               <div class="md-subhead">Get different categories of recipes</div>
-              <md-button class="md-icon-button" to="/meal?filter=breakfast">
+              <md-button class="md-icon-button" to="/recipe?filter=breakfast&filterType=c">
                 <md-icon class="md-size-2x">play_circle</md-icon>
               </md-button>
             </md-card-header-text>
